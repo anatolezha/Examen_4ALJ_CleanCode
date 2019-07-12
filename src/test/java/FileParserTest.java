@@ -25,7 +25,7 @@ class FileParserTest {
     }
     
     @Test
-    public void TestParseOneEntryFunctionWithValidArrayShouldReturnString(){
+    public void parseOneEntry_function_with_valid_array_should_return_string(){
         char[][] inputArray = new char[][]{
                 {' ',' ',' ',' ','_',' ',' ','_',' ',' ',' ',' ',' ','_',' ',' ','_',' ',' ','_',' ',' ','_',' ',' ','_',' '},
                 {' ',' ','|',' ','_','|',' ','_','|','|','_','|','|','_',' ','|','_',' ',' ',' ','|','|','_','|','|','_','|'},
@@ -37,19 +37,19 @@ class FileParserTest {
     }
 
     @Test
-    public void TestParseOneEntryFunctionWithInvalidArrayShouldReturnNull(){
+    public void parseOneEntry_function_with_invalid_array_input_should_return_null(){
         FileParser fileParser = new FileParser();
         char[][] inputArray = new char[][]{
                 {' ',' ',' ',' ','_',' ',' ','|',' ',' ',' ',' ',' ','_',' ',' ','_',' ',' ','_',' ',' ','_',' ',' ','_',' '},
                 {' ',' ','|',' ','_','_',' ','_','|','|','_','|','|','_',' ','|','_',' ',' ',' ','|','|','_','|','|','_','|'},
                 {' ',' ','|','|','|',' ',' ','_','|',' ',' ','|',' ','_','|','|','_','|',' ',' ','|','|','_','|',' ','_','|'},
         };
-
-        assertEquals(null, fileParser.parseOneEntry(inputArray));
+        
+        assertNull(fileParser.parseOneEntry(inputArray), "Entry is not null");
     }
     
     @Test
-    public void parseFileShouldReturnOneValidStringIfValidEntryInFile(){
+    public void parse_file_should_return_one_valid_string_if_valid_entry_in_file(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
@@ -78,7 +78,7 @@ class FileParserTest {
     }
 
     @Test
-    public void parseFileShouldReturnNullStringIfInvalidEntryInFile(){
+    public void parse_file_should_return_null_string_if_invalid_entry_in_file(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
@@ -108,7 +108,7 @@ class FileParserTest {
     }
 
     @Test
-    public void parseFileShouldReturnValidStringsIfOnlyValidEntriesInFile(){
+    public void parse_file_should_return_valid_strings_if_valid_entries_in_file(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
@@ -146,7 +146,7 @@ class FileParserTest {
 
 
     @Test
-    public void parseFileShouldReturnNullStringsIfInvalidEntriesInFile(){
+    public void parse_file_should_return_null_strings_if_invalid_entries_in_file(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
@@ -185,7 +185,6 @@ class FileParserTest {
             }
             
         }
-
         try {
             inputReader = new BufferedReader( new FileReader(output.toString()));
             assertEquals(expectedResult, fileParser.parseFile(inputReader));
@@ -196,7 +195,7 @@ class FileParserTest {
     }
     
     @Test
-    public void normalizeEOLShouldReturnFileWithNoCRInEOL() throws IOException {
+    public void normalize_EOL_should_return_file_with_no_CR_in_EOL() throws IOException {
         Path output  = tempDir.resolve("testFile.txt");
         Path expected = tempDir.resolve("exepected.txt");
         FileWriter fileWriter = new FileWriter(output.toString());
@@ -211,10 +210,38 @@ class FileParserTest {
                         "  | _| _||_||_ |_   ||_||_|\n" +
                         "  ||_  _|  | _||_|  ||_| _|\n");
         fileWriter.close();
-
-        
         assertTrue(FileUtils.contentEquals(fileParser.normalizeEOL(new File(output.toString())), new File(expected.toString())), "The file are differents");
-
+    }
+    
+    @Test
+    public void stringToIntArray_should_return_int_array_with_correct_values_if_string_is_valid(){
+        String input = "123456789";
+        int[] expected = {1,2,3,4,5,6,7,8,9};
         
+        assertArrayEquals(expected, fileParser.stringToIntArray(input));
+    }
+
+    @Test
+    public void stringToIntArray_should_throw_IllegalArgumentException_if_input_contain_no_digit_char(){
+        String input = "123456a89";
+
+        assertThrows(IllegalArgumentException.class, () -> fileParser.stringToIntArray(input));
+    }
+    
+    @Test
+    public void check_sum_should_return_true_if_valid_code(){
+        int[] input = {4,5,7,5,0,8,0,0,0};
+        
+        assertTrue(fileParser.checkSum(input), "The checksum is false");
+        
+    }
+    
+    
+    @Test
+    public void check_sum_should_return_false_if_invalid_code(){
+        int[] input = {3,5,6,6,0,9,7,0,1};
+            
+        assertFalse(fileParser.checkSum(input), "The checksum is false");
+
     }
 }

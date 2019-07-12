@@ -17,6 +17,7 @@ public class FileParser {
             put(" _   |  |", "7");
             put(" _ |_||_|", "8");
             put(" _ |_| _|", "9");
+            put(" _ | ||_|", "0");
 
         }
     };
@@ -84,9 +85,40 @@ public class FileParser {
             }
             code = "";
         }
+        if(!checkSum(stringToIntArray(parsedCode))){
+            parsedCode += " ERR";
+        }
         return parsedCode;
     }
 
+    public int[] stringToIntArray( String code ){
+        char[] charsCode = code.toCharArray();
+        int[] intCode = new int[charsCode.length];
+
+        for (int i = 0; i < charsCode.length; i++) {
+            if(Character.isDigit(charsCode[i])){
+                intCode[i] = Character.getNumericValue(charsCode[i]);
+            } else {
+                throw new IllegalArgumentException("Only digits characters are authorized");
+            }
+        }
+        
+        return intCode;
+    }
+    
+    public boolean checkSum(int[] code){
+        int sum = 0;
+        for (int i = 0; i < code.length; i++) {
+            sum += code[i] * (code.length - i);
+        }
+
+        if (sum % 11 == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
     public ArrayList<String> getParsedCodes() {
         return parsedCodes;
     }
