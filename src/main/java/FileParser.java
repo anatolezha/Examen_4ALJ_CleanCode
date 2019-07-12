@@ -5,6 +5,7 @@ import java.util.Map;
 
 public class FileParser {
     private ArrayList<String> parsedCodes;
+    private File inputFile;
     private final Map<String, String> Dictionary = new HashMap<>(){
         {
             put("     |  |", "1");
@@ -21,29 +22,36 @@ public class FileParser {
     };
 
     public FileParser(String fileName) throws IOException {
-        normalizeEOL(fileName);
-        parsedCodes = parseFile();
-    }
-
-    private void normalizeEOL(String fileName) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        BufferedWriter writer = new BufferedWriter( new FileWriter("normalizeFile.txt"));
-        String line ;
-        while ((line = reader.readLine()) != null) {
-            writer.append(line + "\n");
-        }
-        writer.close();
-        reader.close();
+        inputFile = normalizeEOL(new File(fileName));
+        parsedCodes = parseFile(new BufferedReader(new FileReader(inputFile)));
     }
     
-    private ArrayList<String> parseFile() throws IOException {
-        FileInputStream fileInputStream = new FileInputStream("normalizeFile.txt");
+    public FileParser(){ }
+    
+    public File normalizeEOL(File inputFile) throws IOException {
+        
+        BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+        String newContent= "";
+        
+        String line ;
+        while ((line = reader.readLine()) != null) {
+            newContent += line + "\n";
+        }
+        reader.close();
+        
+        BufferedWriter writer =new BufferedWriter(new FileWriter(inputFile));
+        writer.write(newContent);
+        writer.close();
+        return inputFile;
+    }
+    
+    public ArrayList<String> parseFile(BufferedReader inputFile) throws IOException {
         ArrayList<String> parserArray = new ArrayList<>();
         char[][] currentEntry = new char[3][27];
         int charCode;
         int lineBuffer = 0, columnBuffer=0;
 
-        while ((charCode = fileInputStream.read()) >= 0) {
+        while ((charCode = inputFile.read()) >= 0) {
             if(lineBuffer >= 3) {
                 lineBuffer = 0;
                 columnBuffer = 0;
@@ -57,11 +65,11 @@ public class FileParser {
             }
         }
         parserArray.add(parseOneEntry(currentEntry));
-
+        inputFile.close();
         return parserArray;
     }
 
-    private String parseOneEntry(char[][] currentEntry) {
+    public String parseOneEntry(char[][] currentEntry) {
         String parsedCode = "";
         String code = "";
 
@@ -69,7 +77,11 @@ public class FileParser {
             for (int j = 0; j < 3; j++) {
                     code += "" + currentEntry[j][i] + currentEntry[j][i+1] + currentEntry[j][i+2];
             }
-            parsedCode += Dictionary.get(code);
+            if(Dictionary.get(code) != null) {
+                parsedCode += Dictionary.get(code);
+            } else {
+                return null;
+            }
             code = "";
         }
         return parsedCode;
