@@ -212,6 +212,35 @@ class FileParserTest {
         fileWriter.close();
         assertTrue(FileUtils.contentEquals(fileParser.normalizeEOL(new File(output.toString())), new File(expected.toString())), "The file are differents");
     }
+
+    @Test
+    public void parse_file_should_return_number_ERR_if_checksum_of_entry_is_not_correct(){
+        Path output  = tempDir.resolve("testFile.txt");
+
+        try {
+            FileWriter fileWriter = new FileWriter(output.toString());
+            fileWriter.write(
+                    " _  _     _  _        _  _ \n" +
+                            "|_ |_ |_| _|  |  ||_||_||_ \n" +
+                            "|_||_|  | _|  |  |  | _| _|\n");
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        BufferedReader inputReader;
+        ArrayList<String> expectedResult = new ArrayList<>(){{
+            add("664371495 ERR");
+        }};
+
+        try {
+            inputReader = new BufferedReader( new FileReader(output.toString()));
+            assertEquals(expectedResult, fileParser.parseFile(inputReader));
+            inputReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     
     @Test
     public void stringToIntArray_should_return_int_array_with_correct_values_if_string_is_valid(){
