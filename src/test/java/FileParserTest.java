@@ -45,7 +45,7 @@ class FileParserTest {
                 {' ',' ','|','|','|',' ',' ','_','|',' ',' ','|',' ','_','|','|','_','|',' ',' ','|','|','_','|',' ','_','|'},
         };
         
-        assertNull(fileParser.parseOneEntry(inputArray), "Entry is not null");
+        assertEquals("1??456789 ILL", fileParser.parseOneEntry(inputArray));
     }
     
     @Test
@@ -55,9 +55,9 @@ class FileParserTest {
         try {
             FileWriter fileWriter = new FileWriter(output.toString());
             fileWriter.write(
-                    "    _  _     _  _  _  _  _ \n" +
-                    "  | _| _||_||_ |_   ||_||_|\n" +
-                    "  ||_  _|  | _||_|  ||_| _|\n");
+            "    _  _     _  _  _  _  _ \n" +
+                "  | _| _||_||_ |_   ||_||_|\n" +
+                "  ||_  _|  | _||_|  ||_| _|\n");
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -78,16 +78,16 @@ class FileParserTest {
     }
 
     @Test
-    public void parse_file_should_return_null_string_if_invalid_entry_in_file(){
+    public void parse_file_should_return_interrogation_and_ILL_if_unknown_char_in_entry(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
             FileWriter fileWriter = new FileWriter(output.toString());
             fileWriter.write(
-                        "    _  _     _  _  _  _  _ \n" +
-                            "  | _| _|| ||_ |_   ||_|| |\n" +
-                            "  ||_  _|  | |||_|   | | _|\n" +
-                            "");
+            "    _  _     _  _  _  _  _ \n" +
+                "  | _| _|| ||_ |_   ||_|| |\n" +
+                "  ||_  _|  | |||_|   | | _|\n" +
+                "");
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -95,7 +95,7 @@ class FileParserTest {
 
         BufferedReader inputReader;
         ArrayList<String> expectedResult = new ArrayList<>(){{
-            add(null);
+            add("123??6??? ILL");
         }};
 
         try {
@@ -114,14 +114,14 @@ class FileParserTest {
         try {
             FileWriter fileWriter = new FileWriter(output.toString());
             fileWriter.write(
-                    "    _  _     _  _  _  _  _ \n" +
-                            "  | _| _||_||_ |_   ||_||_|\n" +
-                            "  ||_  _|  | _||_|  ||_| _|\n");
+            "    _  _     _  _  _  _  _ \n" +
+                "  | _| _||_||_ |_   ||_||_|\n" +
+                "  ||_  _|  | _||_|  ||_| _|\n");
             for (int i = 0; i < 99; i++) {
                 fileWriter.append(
-                                "\n    _  _     _  _  _  _  _ \n" +
-                                "  | _| _||_||_ |_   ||_||_|\n" +
-                                "  ||_  _|  | _||_|  ||_| _|\n");
+                    "\n    _  _     _  _  _  _  _ \n" +
+                    "  | _| _||_||_ |_   ||_||_|\n" +
+                    "  ||_  _|  | _||_|  ||_| _|\n");
             }
             fileWriter.close();
         } catch (IOException e) {
@@ -146,27 +146,29 @@ class FileParserTest {
 
 
     @Test
-    public void parse_file_should_return_null_strings_if_invalid_entries_in_file(){
+    public void parse_file_should_return_strings_with_interrogation_and_ILL_if_invalid_entries_in_file(){
         Path output  = tempDir.resolve("testFile.txt");
 
         try {
             FileWriter fileWriter = new FileWriter(output.toString());
             fileWriter.write(
-                    "    _  _     _  _  _  _  _ \n" +
-                            "  | _| _||_||_ |_   ||_||_|\n" +
-                            "  ||_  _|  | _||_|  ||_| _|\n");
+            "    _  _     _  _  _  _  _ \n" +
+                "  | _| _||_||_ |_   ||_||_|\n" +
+                "  ||_  _|  | _||_|  ||_| _|\n");
             for (int i = 0; i < 99; i++) {
                 if(i%2 == 0){
                     fileWriter.write(
-                            "\n    _  _     _  _  _  _  _ \n" +
-                                    "  | _| _|| ||_ |_   ||_|| |\n" +
-                                    "  ||_  _|  | |||_|   | | _|\n" +
-                                    "");
+                    "\n"        +
+                        "    _  _     _  _  _  _  _ \n" +
+                        "  | _| _|| ||_ |_   ||_|| |\n" +
+                        "  ||_  _|  | |||_|   | | _|\n" +
+                        "");
                 } else {
                     fileWriter.append(
-                            "\n    _  _     _  _  _  _  _ \n" +
-                                    "  | _| _||_||_ |_   ||_||_|\n" +
-                                    "  ||_  _|  | _||_|  ||_| _|\n");
+                        "\n"        +
+                        "    _  _     _  _  _  _  _ \n" + 
+                        "  | _| _||_||_ |_   ||_||_|\n" +
+                        "  ||_  _|  | _||_|  ||_| _|\n");
                 }
             }
             fileWriter.close();
@@ -181,7 +183,7 @@ class FileParserTest {
             if(i%2 == 0){
                 expectedResult.add("123456789");
             } else {
-                expectedResult.add(null);
+                expectedResult.add("123??6??? ILL");
             }
             
         }
@@ -200,15 +202,15 @@ class FileParserTest {
         Path expected = tempDir.resolve("exepected.txt");
         FileWriter fileWriter = new FileWriter(output.toString());
         fileWriter.write(
-                "    _  _     _  _  _  _  _ \r\n" +
-                        "  | _| _||_||_ |_   ||_||_|\r\n" +
-                        "  ||_  _|  | _||_|  ||_| _|\r\n");
+        "    _  _     _  _  _  _  _ \r\n" +
+            "  | _| _||_||_ |_   ||_||_|\r\n" +
+            "  ||_  _|  | _||_|  ||_| _|\r\n");
         fileWriter.close();
         fileWriter = new FileWriter(expected.toString());
         fileWriter.write(
-                "    _  _     _  _  _  _  _ \n" +
-                        "  | _| _||_||_ |_   ||_||_|\n" +
-                        "  ||_  _|  | _||_|  ||_| _|\n");
+        "    _  _     _  _  _  _  _ \n" +
+            "  | _| _||_||_ |_   ||_||_|\n" +
+            "  ||_  _|  | _||_|  ||_| _|\n");
         fileWriter.close();
         assertTrue(FileUtils.contentEquals(fileParser.normalizeEOL(new File(output.toString())), new File(expected.toString())), "The file are differents");
     }
@@ -220,9 +222,9 @@ class FileParserTest {
         try {
             FileWriter fileWriter = new FileWriter(output.toString());
             fileWriter.write(
-                    " _  _     _  _        _  _ \n" +
-                            "|_ |_ |_| _|  |  ||_||_||_ \n" +
-                            "|_||_|  | _|  |  |  | _| _|\n");
+            " _  _     _  _        _  _ \n" +
+                "|_ |_ |_| _|  |  ||_||_||_ \n" +
+                "|_||_|  | _|  |  |  | _| _|\n");
             fileWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
