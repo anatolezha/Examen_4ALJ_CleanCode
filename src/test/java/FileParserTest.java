@@ -273,4 +273,33 @@ class FileParserTest {
         assertFalse(fileParser.checkSum(input), "The checksum is false");
 
     }
+    
+    @Test
+    public void writeOutputFile_should_return_file_with_values_of_input_line_by_line(){
+        Path expected  = tempDir.resolve("expectedFile.txt");
+        Path result  = tempDir.resolve("testFile.txt");
+        try {
+            FileWriter fileWriter = new FileWriter(expected.toString());
+            fileWriter.write(
+                    "123456789\n" +
+                        "457508000\n" +
+                        "664371495 ERR\n"
+                    );
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        ArrayList<String> inputArrayList = new ArrayList<>(){{
+            add("123456789");
+            add("457508000");
+            add("664371495 ERR");
+        }};
+
+        try {
+            assertTrue(FileUtils.contentEquals(new File(expected.toString()), fileParser.writeOutputFile(inputArrayList, new File(result.toString()))), "The file are not the same");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

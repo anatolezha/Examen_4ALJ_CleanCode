@@ -6,6 +6,7 @@ import java.util.Map;
 public class FileParser {
     private ArrayList<String> parsedCodes;
     private File inputFile;
+    private File outputFile;
     private final Map<String, String> Dictionary = new HashMap<>(){
         {
             put("     |  |", "1");
@@ -25,8 +26,24 @@ public class FileParser {
     public FileParser(String fileName) throws IOException {
         inputFile = normalizeEOL(new File(fileName));
         parsedCodes = parseFile(new BufferedReader(new FileReader(inputFile)));
+        outputFile = writeOutputFile(parsedCodes, new File("output.txt"));
     }
-    
+
+    public File writeOutputFile(ArrayList<String> parsedCodes, File outputFile) throws IOException {
+        outputFile.createNewFile();
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+
+        for (String code: parsedCodes) {
+            if(code != null) {
+                writer.write(code);
+                writer.newLine();
+            }
+        }
+        writer.close();
+        
+        return normalizeEOL(outputFile);
+    }
+
     public FileParser(){ }
     
     public File normalizeEOL(File inputFile) throws IOException {
@@ -40,7 +57,7 @@ public class FileParser {
         }
         reader.close();
         
-        BufferedWriter writer =new BufferedWriter(new FileWriter(inputFile));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(inputFile));
         writer.write(newContent);
         writer.close();
         return inputFile;
@@ -99,7 +116,7 @@ public class FileParser {
             if(Character.isDigit(charsCode[i])){
                 intCode[i] = Character.getNumericValue(charsCode[i]);
             } else {
-                throw new IllegalArgumentException("Only digits characters are authorized");
+                throw new IllegalArgumentException();
             }
         }
         
